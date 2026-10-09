@@ -7,16 +7,13 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Required (API 34+) for OperationService's foregroundServiceType="dataSync". -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
-    <!-- Debug-only card-scan feature persists a copy of every scanned capture to a fixed public
-         path (storage/emulated/0/ddnostalgia/DuelMastersInventory/scanned) for offline match
-         tuning - see ScannedCardStorage. WRITE_EXTERNAL_STORAGE + requestLegacyExternalStorage
-         covers Android 10 (API 29); MANAGE_EXTERNAL_STORAGE (requested at runtime) covers 11+. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <!-- Storage permissions for the debug-only scan audit trail live in src/debug/AndroidManifest.xml. -->
 
     <application
         android:name=".DuelMastersInventoryApp"
@@ -25,7 +22,6 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DuelMastersInventory"
@@ -33,6 +29,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.DuelMastersInventory">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

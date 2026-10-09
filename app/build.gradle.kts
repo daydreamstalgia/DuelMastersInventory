@@ -19,12 +19,12 @@ fun featureFlag(name: String): Boolean =
 
 android {
     namespace = "ro.daydreamstalgia.duelmastersinventory"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ro.daydreamstalgia.duelmastersinventory"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -73,7 +73,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {

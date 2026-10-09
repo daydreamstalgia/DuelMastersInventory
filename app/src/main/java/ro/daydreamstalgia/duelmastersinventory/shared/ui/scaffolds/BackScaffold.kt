@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -111,7 +113,10 @@ fun BackScaffold(
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        // consumeWindowInsets + imePadding: on Android 15+ the app is drawn edge-to-edge and the
+        // window no longer resizes for the keyboard, so content shrinks itself to stay above it
+        // (without double-counting the nav-bar inset already in innerPadding). No-op on older versions.
+        Box(modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding).imePadding()) {
             content()
         }
     }

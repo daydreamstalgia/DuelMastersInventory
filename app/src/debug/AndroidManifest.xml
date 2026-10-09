@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Debug builds persist a copy of every scanned capture to a fixed public path
+         (storage/emulated/0/ddnostalgia/DuelMastersInventory/scanned) for offline match
+         tuning - see ScannedCardStorage. WRITE_EXTERNAL_STORAGE + requestLegacyExternalStorage
+         covers Android 10 (API 29); MANAGE_EXTERNAL_STORAGE (requested at runtime) covers 11+.
+         Kept out of release builds: Play restricts MANAGE_EXTERNAL_STORAGE. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+
+    <application android:requestLegacyExternalStorage="true" />
+</manifest>

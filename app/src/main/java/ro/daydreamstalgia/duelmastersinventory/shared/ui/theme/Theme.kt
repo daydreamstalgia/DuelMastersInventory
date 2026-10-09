@@ -106,10 +106,17 @@ fun DuelMastersInventoryTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            // Android 15+ draws apps edge-to-edge and ignores statusBarColor: the bar shows the
+            // app background, so icons follow the theme. Older versions keep the primary-colored
+            // bar, whose (light-in-dark / dark-in-light) primary needs the inverse.
+            val edgeToEdge = Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+            if (!edgeToEdge) {
+                @Suppress("DEPRECATION")
+                window.statusBarColor = colorScheme.primary.toArgb()
+            }
             WindowCompat
                 .getInsetsController(window, view)
-                .isAppearanceLightStatusBars = darkTheme
+                .isAppearanceLightStatusBars = if (edgeToEdge) !darkTheme else darkTheme
         }
     }
 

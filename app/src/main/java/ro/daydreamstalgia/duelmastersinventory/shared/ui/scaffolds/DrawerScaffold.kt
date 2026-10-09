@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -115,8 +117,11 @@ fun DrawerScaffold(
             },
             containerColor = MaterialTheme.colorScheme.background,
         ) { innerPadding ->
+            // consumeWindowInsets + imePadding: on Android 15+ the app is drawn edge-to-edge and the
+            // window no longer resizes for the keyboard, so content shrinks itself to stay above it
+            // (without double-counting the nav-bar inset already in innerPadding). No-op on older versions.
             Surface(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding).imePadding(),
                 color = MaterialTheme.colorScheme.background,
             ) {
                 content()

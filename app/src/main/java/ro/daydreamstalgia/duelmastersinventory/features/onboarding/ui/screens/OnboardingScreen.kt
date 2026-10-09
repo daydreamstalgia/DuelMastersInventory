@@ -1,5 +1,6 @@
 package ro.daydreamstalgia.duelmastersinventory.features.onboarding.ui.screens
 
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +52,8 @@ fun OnboardingScreen(navController: NavController) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+    // safeDrawingPadding: keeps content clear of the system bars on Android 15+ edge-to-edge (no-op before).
+    Box(modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp)) {
         when (val current = step) {
             is OnboardingStep.OptIn -> OptInStep(onYes = viewModel::startFocus, onNo = viewModel::skip)
             is OnboardingStep.Focus -> FocusStep(

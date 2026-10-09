@@ -1,5 +1,12 @@
 package ro.daydreamstalgia.duelmastersinventory.features.transactions.ui.screens
 
+import android.app.Activity
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -185,22 +192,25 @@ fun CardScanScreen(
         if (!hasCameraPermission) permissionLauncher.launch(Manifest.permission.CAMERA)
 
         // Best-effort - lets scanned captures be written to storage/emulated/0/ddnostalgia/... .
-        // Debug-only screen, so a denial just means that audit trail is skipped, nothing breaks.
-        if (Build.VERSION.SDK_INT >= 30) {
-            if (!Environment.isExternalStorageManager()) {
-                try {
-                    manageStorageLauncher.launch(
-                        Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:${context.packageName}"))
-                    )
-                } catch (_: Exception) {
+        // Debug builds only (the permissions are only declared in src/debug); a denial just
+        // means that audit trail is skipped, nothing breaks.
+        if (BuildConfig.DEBUG) {
+            if (Build.VERSION.SDK_INT >= 30) {
+                if (!Environment.isExternalStorageManager()) {
                     try {
-                        manageStorageLauncher.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                        manageStorageLauncher.launch(
+                            Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:${context.packageName}"))
+                        )
                     } catch (_: Exception) {
+                        try {
+                            manageStorageLauncher.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                        } catch (_: Exception) {
+                        }
                     }
                 }
+            } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
-        } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
@@ -264,7 +274,28 @@ fun CardScanScreen(
         viewModel.onCaptured(cropped)
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color(0xFF0B0D0E))) {
+    // Full-screen (no scaffold): on Android 15+ the app is drawn edge-to-edge, so keep the dark
+    // background under the system bars but pad the camera/controls clear of them, and use light
+    // status-bar icons while this screen is shown. Insets are zero on older versions.
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val window = (view.context as? Activity)?.window
+        val controller = window?.let { WindowCompat.getInsetsController(it, view) }
+        val previousLightIcons = controller?.isAppearanceLightStatusBars
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            controller?.isAppearanceLightStatusBars = false
+        }
+        onDispose {
+            if (previousLightIcons != null) controller?.isAppearanceLightStatusBars = previousLightIcons
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0B0D0E))
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+    ) {
         if (pickedImage != null) {
             PickedImageEditor(
                 bitmap = pickedImage!!,

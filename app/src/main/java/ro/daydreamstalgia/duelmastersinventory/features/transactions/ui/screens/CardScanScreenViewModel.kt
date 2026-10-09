@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ro.daydreamstalgia.duelmastersinventory.BuildConfig
 import ro.daydreamstalgia.duelmastersinventory.nav.Routes
 import ro.daydreamstalgia.duelmastersinventory.shared.data.cards.model.CardPrintWithPrototype
 import ro.daydreamstalgia.duelmastersinventory.shared.data.cards.model.CardSetOrder
@@ -217,6 +218,7 @@ class CardScanScreenViewModel @Inject constructor(
 
     /** Saves the capture that entered the match pipeline alongside the confirmed print identity and condition, see [ScannedCardStorage]. Best-effort - failures are logged, not surfaced. */
     private fun persistCapture(cardPrintId: Int, condition: String?) {
+        if (!BuildConfig.DEBUG) return
         val bitmap = _capturedBitmap.value ?: return
         val print = _printsById.value[cardPrintId]?.print ?: return
         viewModelScope.launch(Dispatchers.IO) {
