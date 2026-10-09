@@ -138,8 +138,10 @@ fun AppNavHost(
             TransactedCardsEditScreen(navController = navController, screenConfig = screenConfig)
         }
 
-        navComposable(Routes.CardScan, "Scan card", ScaffoldType.NONE) {
-            CardScanScreen(navController = navController)
+        if (FeatureFlags.CARD_SCAN) {
+            navComposable(Routes.CardScan, "Scan card", ScaffoldType.NONE) {
+                CardScanScreen(navController = navController)
+            }
         }
 
         if (FeatureFlags.ACTORS) {

@@ -10,8 +10,7 @@
     <!-- Required (API 34+) for OperationService's foregroundServiceType="dataSync". -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- CAMERA (card scan) is only merged in when feature.cardScan is on - see app/src/cardScan. -->
 
     <!-- Storage permissions for the debug-only scan audit trail live in src/debug/AndroidManifest.xml. -->
 

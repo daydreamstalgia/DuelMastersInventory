@@ -18,4 +18,10 @@ object FeatureFlags {
 
     /** Settings > "Reset database": wipes all data and sends the app back through onboarding. */
     const val RESET_DATABASE: Boolean = BuildConfig.FEATURE_RESET_DATABASE
+
+    /**
+     * Camera card scan (still in development): the scan button on inbound cards, its screen,
+     * the ORB scan-match index and the CAMERA permission (see app/src/cardScan).
+     */
+    const val CARD_SCAN: Boolean = BuildConfig.FEATURE_CARD_SCAN
 }

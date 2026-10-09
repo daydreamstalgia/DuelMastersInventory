@@ -65,6 +65,7 @@ import ro.daydreamstalgia.duelmastersinventory.shared.ui.components.transactions
 import ro.daydreamstalgia.duelmastersinventory.shared.ui.components.transactions.INBOUND_ON_COLOR
 import ro.daydreamstalgia.duelmastersinventory.shared.ui.components.transactions.OUTBOUND_ON_COLOR
 import ro.daydreamstalgia.duelmastersinventory.shared.utils.constants.Conditions
+import ro.daydreamstalgia.duelmastersinventory.shared.utils.constants.FeatureFlags
 import ro.daydreamstalgia.duelmastersinventory.shared.utils.constants.conditionColor
 
 
@@ -238,23 +239,25 @@ fun InboundTransactedCardsEditScreen(
                 Box(modifier = Modifier.weight(1f)) {
                     FilterBox()
                 }
-                Box(
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                        .clickable {
-                            navController.navigate(Routes.CardScan.createRoute(transaction.id))
-                        },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        Icons.Filled.CameraAlt,
-                        contentDescription = "Scan card",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(20.dp),
-                    )
+                if (FeatureFlags.CARD_SCAN) {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                            .clickable {
+                                navController.navigate(Routes.CardScan.createRoute(transaction.id))
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            Icons.Filled.CameraAlt,
+                            contentDescription = "Scan card",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
                 }
             }
 

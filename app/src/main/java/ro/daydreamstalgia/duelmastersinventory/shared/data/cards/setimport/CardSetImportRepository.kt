@@ -18,6 +18,7 @@ import ro.daydreamstalgia.duelmastersinventory.shared.data.cards.model.CardSetOr
 import ro.daydreamstalgia.duelmastersinventory.shared.data.cards.repository.CardImageMatchRepository
 import ro.daydreamstalgia.duelmastersinventory.shared.data.search.SemanticSearchEngine
 import ro.daydreamstalgia.duelmastersinventory.shared.data.search.model.CardPrototypeEmbedding
+import ro.daydreamstalgia.duelmastersinventory.shared.utils.constants.FeatureFlags
 import ro.daydreamstalgia.duelmastersinventory.shared.utils.image.ImageSimilarity
 import ro.daydreamstalgia.duelmastersinventory.shared.utils.text.matchAbilityKeywords
 import ro.daydreamstalgia.duelmastersinventory.shared.utils.text.normalizeForIdentityMatch
@@ -260,8 +261,10 @@ class CardSetImportRepository @Inject constructor(
 
         onProgress(ImportProgress("Updating search index..."))
         backfillEmbeddings()
-        onProgress(ImportProgress("Extending scan-match index..."))
-        cardImageMatchRepository.indexPrints(touchedPrintIds)
+        if (FeatureFlags.CARD_SCAN) {
+            onProgress(ImportProgress("Extending scan-match index..."))
+            cardImageMatchRepository.indexPrints(touchedPrintIds)
+        }
 
         SetImportResult(
             setLanguage = pack.set_language,

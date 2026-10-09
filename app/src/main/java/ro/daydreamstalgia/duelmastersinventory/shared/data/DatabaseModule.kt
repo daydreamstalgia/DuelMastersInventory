@@ -15,6 +15,7 @@ import ro.daydreamstalgia.duelmastersinventory.shared.data.cards.model.CardSetOr
 import ro.daydreamstalgia.duelmastersinventory.shared.data.cards.repository.CardImageMatchRepository
 import ro.daydreamstalgia.duelmastersinventory.shared.data.search.SemanticSearchEngine
 import ro.daydreamstalgia.duelmastersinventory.shared.data.search.model.CardPrototypeEmbedding
+import ro.daydreamstalgia.duelmastersinventory.shared.utils.constants.FeatureFlags
 import ro.daydreamstalgia.duelmastersinventory.shared.utils.text.stripReminderText
 import javax.inject.Singleton
 
@@ -107,7 +108,7 @@ object DatabaseModule {
                         }
 
                         val cardImageMatchRepository = CardImageMatchRepository(app, database)
-                        if (database.cardImageFeaturesDao().count() == 0) {
+                        if (FeatureFlags.CARD_SCAN && database.cardImageFeaturesDao().count() == 0) {
                             Log.d("DatabaseModule", "Building card scan ORB feature index")
                             val startedAt = System.currentTimeMillis()
                             runBlocking { cardImageMatchRepository.ensureIndexBuilt() }
