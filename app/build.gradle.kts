@@ -8,7 +8,7 @@ plugins {
 }
 
 // Personal-use features kept out of public (Play) builds. Off unless opted in per machine via
-// local.properties (`feature.actors=true`, `feature.googleSheets=true`, `feature.resetDatabase=true`); `-Pfeature.<name>=...` overrides.
+// local.properties (`feature.actors=true`, `feature.googleSheets=true`, `feature.resetDatabase=true`, `feature.cardScan=true`); `-Pfeature.<name>=...` overrides.
 val localProperties = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
@@ -16,6 +16,13 @@ fun featureFlag(name: String): Boolean =
     (providers.gradleProperty("feature.$name").orNull
         ?: localProperties.getProperty("feature.$name")
         ?: "false").toBoolean()
+
+// Upload key for Play (Play App Signing re-signs with the app signing key). Read from the
+// gitignored keystore.properties (storeFile, storePassword, keyAlias, keyPassword); without it
+// release builds are produced unsigned.
+val keystoreProperties = Properties().apply {
+    rootProject.file("keystore.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
 
 android {
     namespace = "ro.daydreamstalgia.duelmastersinventory"
@@ -36,10 +43,23 @@ android {
         buildConfigField("boolean", "FEATURE_ACTORS", featureFlag("actors").toString())
         buildConfigField("boolean", "FEATURE_GOOGLE_SHEETS", featureFlag("googleSheets").toString())
         buildConfigField("boolean", "FEATURE_RESET_DATABASE", featureFlag("resetDatabase").toString())
+        buildConfigField("boolean", "FEATURE_CARD_SCAN", featureFlag("cardScan").toString())
+    }
+
+    signingConfigs {
+        if (keystoreProperties.containsKey("storeFile")) {
+            create("upload") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("upload")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -89,6 +109,16 @@ android {
     }
     androidResources {
         noCompress += "tflite"
+    }
+}
+
+// Card scan is still in development: its CAMERA permission lives in a separate manifest that is
+// only merged into variants when the flag is on.
+androidComponents {
+    onVariants { variant ->
+        if (featureFlag("cardScan")) {
+            variant.sources.manifests.addStaticManifestFile("src/cardScan/AndroidManifest.xml")
+        }
     }
 }
 
