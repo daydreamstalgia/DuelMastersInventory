@@ -8,7 +8,8 @@ plugins {
 }
 
 // Personal-use features kept out of public (Play) builds. Off unless opted in per machine via
-// local.properties (`feature.actors=true`, `feature.googleSheets=true`, `feature.resetDatabase=true`, `feature.cardScan=true`); `-Pfeature.<name>=...` overrides.
+// local.properties (`feature.actors=true`, `feature.googleSheets=true`, `feature.resetDatabase=true`, `feature.cardScan=true`,
+// `feature.statistics=true`); `-Pfeature.<name>=...` overrides.
 val localProperties = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
@@ -44,6 +45,7 @@ android {
         buildConfigField("boolean", "FEATURE_GOOGLE_SHEETS", featureFlag("googleSheets").toString())
         buildConfigField("boolean", "FEATURE_RESET_DATABASE", featureFlag("resetDatabase").toString())
         buildConfigField("boolean", "FEATURE_CARD_SCAN", featureFlag("cardScan").toString())
+        buildConfigField("boolean", "FEATURE_STATISTICS", featureFlag("statistics").toString())
     }
 
     signingConfigs {

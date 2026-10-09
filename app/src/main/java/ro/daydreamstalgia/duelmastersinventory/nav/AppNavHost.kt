@@ -185,8 +185,10 @@ fun AppNavHost(
             }
         }
 
-        navComposable(Routes.Statistics, "Statistics", ScaffoldType.DRAWER) {
-            StatisticsScreen(navController = navController)
+        if (FeatureFlags.STATISTICS) {
+            navComposable(Routes.Statistics, "Statistics", ScaffoldType.DRAWER) {
+                StatisticsScreen(navController = navController)
+            }
         }
 
         navComposable(

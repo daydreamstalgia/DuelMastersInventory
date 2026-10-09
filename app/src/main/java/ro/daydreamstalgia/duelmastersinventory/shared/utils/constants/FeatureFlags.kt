@@ -24,4 +24,7 @@ object FeatureFlags {
      * the ORB scan-match index and the CAMERA permission (see app/src/cardScan).
      */
     const val CARD_SCAN: Boolean = BuildConfig.FEATURE_CARD_SCAN
+
+    /** Statistics screen (monthly spend, next-buy planning) - personal use for now. */
+    const val STATISTICS: Boolean = BuildConfig.FEATURE_STATISTICS
 }

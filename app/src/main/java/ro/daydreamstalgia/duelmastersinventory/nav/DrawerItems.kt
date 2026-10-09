@@ -22,7 +22,7 @@ val DrawerItems = listOfNotNull(
     DrawerItem("Transactions", Routes.TransactionsList.route, Icons.Filled.SwapHoriz),
     if (FeatureFlags.ACTORS) DrawerItem("Actors", Routes.ActorsList.route, Icons.Filled.People) else null,
     if (FeatureFlags.GOOGLE_SHEETS) DrawerItem("Spreadsheets", Routes.Spreadsheets.route, Icons.Filled.TableChart) else null,
-    DrawerItem("Statistics", Routes.Statistics.route, Icons.Filled.BarChart),
+    if (FeatureFlags.STATISTICS) DrawerItem("Statistics", Routes.Statistics.route, Icons.Filled.BarChart) else null,
     DrawerItem("Sets", Routes.Sets.route, Icons.Filled.Inventory2),
     DrawerItem("Settings", Routes.Settings.route, Icons.Filled.Settings),
 )
