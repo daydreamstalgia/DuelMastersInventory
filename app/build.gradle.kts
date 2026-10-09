@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,12 +7,22 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+// Personal-use features kept out of public (Play) builds. Off unless opted in per machine via
+// local.properties (`feature.actors=true`, `feature.googleSheets=true`, `feature.resetDatabase=true`); `-Pfeature.<name>=...` overrides.
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+fun featureFlag(name: String): Boolean =
+    (providers.gradleProperty("feature.$name").orNull
+        ?: localProperties.getProperty("feature.$name")
+        ?: "false").toBoolean()
+
 android {
-    namespace = "ro.ddnostalgia.duelmastersinventory"
+    namespace = "ro.daydreamstalgia.duelmastersinventory"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "ro.ddnostalgia.duelmastersinventory"
+        applicationId = "ro.daydreamstalgia.duelmastersinventory"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
@@ -20,6 +32,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("boolean", "FEATURE_ACTORS", featureFlag("actors").toString())
+        buildConfigField("boolean", "FEATURE_GOOGLE_SHEETS", featureFlag("googleSheets").toString())
+        buildConfigField("boolean", "FEATURE_RESET_DATABASE", featureFlag("resetDatabase").toString())
     }
 
     buildTypes {
